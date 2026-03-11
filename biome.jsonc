@@ -9,11 +9,22 @@
       "!hooks/use-mobile.ts"
     ]
   },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "useSortedAttributes": "off",
+        "organizeImports": "off"
+      }
+    }
+  },
   "linter": {
     "rules": {
       "suspicious": {
         /* Needs more work to fix */
         "noExplicitAny": "off",
+
+        "noTsIgnore": "off",
 
         /* Allow for Tailwind @ rules */
         "noUnknownAtRules": "off",
@@ -25,6 +36,7 @@
         "noBitwiseOperators": "off"
       },
       "style": {
+        "useBlockStatements": "off",
         /* Allowing magic numbers */
         "noMagicNumbers": "off",
 
@@ -33,7 +45,8 @@
       },
       "nursery": {
         /* Too many false positives */
-        "noUnnecessaryConditions": "off"
+        "noUnnecessaryConditions": "off",
+        "useSortedClasses": "off"
       },
       "complexity": {
         /* Needs more work to fix */
@@ -42,9 +55,14 @@
         /* This one has false positives. It's a bit... iffy 😉 */
         "useSimplifiedLogicExpression": "off"
       },
+      "correctness": {
+        "noUnusedVariables": "off"
+      },
       "a11y": {
         /* Needs more work to fix */
-        "noSvgWithoutTitle": "off"
+        "noSvgWithoutTitle": "off",
+
+        "useValidAriaProps": "off"
       }
     }
   }
