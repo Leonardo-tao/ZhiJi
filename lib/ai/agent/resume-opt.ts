@@ -6,6 +6,7 @@ import {
 import type { ChatMessage } from "@/lib/types";
 import { myProvider } from "@/lib/ai/providers";
 import { createUsageFinishHandler } from "@/lib/ai/agent/common";
+import { scoreSkills } from "@/lib/ai/tools/score-skills";
 import type { AppUsage } from "@/lib/usage";
 
 type CreateResumeOptStreamParams = {
@@ -64,6 +65,10 @@ export function createResumeOptStream({
     model: myProvider.languageModel("chat-model"),
     system: systemPrompt,
     messages: convertToModelMessages(messages),
+    experimental_activeTools: ["scoreSkills"],
+    tools: {
+      scoreSkills,
+    },
     onFinish: createUsageFinishHandler({
       modelId: myProvider.languageModel("chat-model").modelId,
       dataStream,
