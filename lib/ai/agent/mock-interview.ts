@@ -1,12 +1,28 @@
-import { convertToModelMessages, streamText } from "ai";
+import {
+  convertToModelMessages,
+  streamText,
+  type UIMessageStreamWriter,
+} from "ai";
 import type { ChatMessage } from "@/lib/types";
 import { myProvider } from "@/lib/ai/providers";
+import { createUsageFinishHandler } from "@/lib/ai/agent/common";
+import type { AppUsage } from "@/lib/usage";
+
+type CreateMockInterviewStreamParams = {
+  messages: ChatMessage[];
+  dataStream: UIMessageStreamWriter<ChatMessage>;
+  onUsageUpdate: (usage: AppUsage) => void;
+};
 
 /**
  * 模拟程序员面试 AI Agent
  * 提供模拟面试服务，帮助用户准备面试
  */
-export function createMockInterviewStream(messages: ChatMessage[]) {
+export function createMockInterviewStream({
+  messages,
+  dataStream,
+  onUsageUpdate,
+}: CreateMockInterviewStreamParams) {
   const systemPrompt = `你是一个专业的程序员面试官，擅长前端技术栈，包括 HTML、CSS、JavaScript、TypeScript、React、Vue、Node.js、小程序等技术。
 
 你的任务是进行模拟面试，帮助用户准备真实的面试场景。
@@ -28,5 +44,10 @@ export function createMockInterviewStream(messages: ChatMessage[]) {
     model: myProvider.languageModel("chat-model"),
     system: systemPrompt,
     messages: convertToModelMessages(messages),
+    onFinish: createUsageFinishHandler({
+      modelId: myProvider.languageModel("chat-model").modelId,
+      dataStream,
+      onUsageUpdate,
+    }),
   });
 }

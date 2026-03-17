@@ -1,12 +1,28 @@
-import { convertToModelMessages, streamText } from "ai";
+import {
+  convertToModelMessages,
+  streamText,
+  type UIMessageStreamWriter,
+} from "ai";
 import type { ChatMessage } from "@/lib/types";
 import { myProvider } from "@/lib/ai/providers";
+import { createUsageFinishHandler } from "@/lib/ai/agent/common";
+import type { AppUsage } from "@/lib/usage";
+
+type CreateResumeOptStreamParams = {
+  messages: ChatMessage[];
+  dataStream: UIMessageStreamWriter<ChatMessage>;
+  onUsageUpdate: (usage: AppUsage) => void;
+};
 
 /**
  * 简历优化 AI Agent
  * 接收用户消息，AI 会自动判断是否有简历内容，如果没有则提示输入，如果有则进行优化
  */
-export function createResumeOptStream(messages: ChatMessage[]) {
+export function createResumeOptStream({
+  messages,
+  dataStream,
+  onUsageUpdate,
+}: CreateResumeOptStreamParams) {
   const systemPrompt = `你是一个专业的简历优化专家，擅长帮助用户优化简历内容，提升简历质量和竞争力。
 
 请根据用户的消息内容，判断用户是否已经提供了简历内容：
@@ -29,5 +45,10 @@ export function createResumeOptStream(messages: ChatMessage[]) {
     model: myProvider.languageModel("chat-model"),
     system: systemPrompt,
     messages: convertToModelMessages(messages),
+    onFinish: createUsageFinishHandler({
+      modelId: myProvider.languageModel("chat-model").modelId,
+      dataStream,
+      onUsageUpdate,
+    }),
   });
 }
