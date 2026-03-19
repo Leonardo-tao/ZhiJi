@@ -67,7 +67,7 @@ export function createResumeOptStream({
     system: systemPrompt,
     messages: convertToModelMessages(messages),
     stopWhen: stepCountIs(5),
-    experimental_activeTools: ["scoreSkills"],
+    activeTools: ["scoreSkills"],
     tools: {
       scoreSkills,
     },

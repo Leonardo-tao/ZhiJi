@@ -130,7 +130,7 @@ export function createAgentStream({
           system: systemPrompt({ selectedChatModel, requestHints }),
           messages: convertToModelMessages(uiMessages),
           stopWhen: stepCountIs(5),
-          experimental_activeTools:
+          activeTools:
             selectedChatModel === "chat-model-reasoning"
               ? []
               : [
