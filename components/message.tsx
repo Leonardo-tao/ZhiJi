@@ -263,6 +263,15 @@ const PurePreviewMessage = ({
               );
             }
 
+            if (type === "tool-getBehavioralQuestions") {
+              const { toolCallId } = part;
+              return (
+                <div key={toolCallId}>
+                  <Response>{part.output?.content ?? "请稍后..."}</Response>
+                </div>
+              );
+            }
+
             return null;
           })}
 

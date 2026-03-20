@@ -7,6 +7,7 @@ import type { ChatMessage } from "@/lib/types";
 import { myProvider } from "@/lib/ai/providers";
 import { createUsageFinishHandler } from "@/lib/ai/agent/common";
 import type { AppUsage } from "@/lib/usage";
+import { getBehavioralQuestionsTool } from "../tools/behavioral-questions";
 
 type CreateMockInterviewStreamParams = {
   messages: ChatMessage[];
@@ -56,6 +57,10 @@ export function createMockInterviewStream({
     model: myProvider.languageModel("chat-model"),
     system: systemPrompt,
     messages: convertToModelMessages(messages),
+    activeTools: ["getBehavioralQuestions"],
+    tools: {
+      getBehavioralQuestions: getBehavioralQuestionsTool,
+    },
     onFinish: createUsageFinishHandler({
       modelId: myProvider.languageModel("chat-model").modelId,
       dataStream,

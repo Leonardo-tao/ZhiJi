@@ -1,6 +1,7 @@
 import {
   convertToModelMessages,
   streamText,
+  stepCountIs,
   type UIMessageStreamWriter,
 } from "ai";
 import type { ChatMessage } from "@/lib/types";
@@ -65,7 +66,8 @@ export function createResumeOptStream({
     model: myProvider.languageModel("chat-model"),
     system: systemPrompt,
     messages: convertToModelMessages(messages),
-    experimental_activeTools: ["scoreSkills"],
+    stopWhen: stepCountIs(5),
+    activeTools: ["scoreSkills"],
     tools: {
       scoreSkills,
     },
