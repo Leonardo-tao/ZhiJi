@@ -1,6 +1,6 @@
 import { geolocation } from "@vercel/functions";
 import { JsonToSseTransformStream } from "ai";
-import { createResumableStreamContext } from "resumable-stream";
+import { getStreamContext } from "@/lib/ai/agent";
 import { auth, type UserType } from "@/app/(auth)/auth";
 import type { VisibilityType } from "@/components/visibility-selector";
 import { entitlementsByUserType } from "@/lib/ai/entitlements";
@@ -27,19 +27,6 @@ import { generateTitleFromUserMessage } from "../../actions";
 import { type PostRequestBody, postRequestBodySchema } from "./schema";
 
 export const maxDuration = 60;
-
-let streamContext: ReturnType<typeof createResumableStreamContext> | null =
-  null;
-
-export function getStreamContext() {
-  if (!streamContext) {
-    streamContext = createResumableStreamContext({
-      keyPrefix: "resumable-stream",
-      waitUntil: null,
-    });
-  }
-  return streamContext;
-}
 
 export async function POST(request: Request) {
   let requestBody: PostRequestBody;

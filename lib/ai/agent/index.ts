@@ -9,6 +9,7 @@ import { classifyMessages } from "@/lib/ai/agent/classify";
 import { createResumeOptStream } from "@/lib/ai/agent/resume-opt";
 import { createMockInterviewStream } from "@/lib/ai/agent/mock-interview";
 import { createDefaultStream } from "@/lib/ai/agent/common";
+import { createResumableStreamContext } from "resumable-stream";
 
 export type CreateChatStreamOptions = {
   messages: ChatMessage[];
@@ -17,6 +18,19 @@ export type CreateChatStreamOptions = {
   session: Session;
   onFinish?: (params: { messages: ChatMessage[]; usage?: AppUsage }) => void;
 };
+
+let streamContext: ReturnType<typeof createResumableStreamContext> | null =
+  null;
+
+export function getStreamContext() {
+  if (!streamContext) {
+    streamContext = createResumableStreamContext({
+      keyPrefix: "resumable-stream",
+      waitUntil: null,
+    });
+  }
+  return streamContext;
+}
 
 export function createChatStream({
   messages,
