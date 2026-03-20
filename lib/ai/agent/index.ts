@@ -1,204 +1,94 @@
-import { geolocation } from "@vercel/functions";
-import { JsonToSseTransformStream } from "ai";
+import { createUIMessageStream } from "ai";
 import type { Session } from "next-auth";
-import { after } from "next/server";
-import {
-  createResumableStreamContext,
-  type ResumableStreamContext,
-} from "resumable-stream";
-
-import type { UserType } from "@/app/(auth)/auth";
-import { generateTitleFromUserMessage } from "@/app/(chat)/actions";
-import type { PostRequestBody } from "@/app/(chat)/api/chat/schema";
-import type { VisibilityType } from "@/components/visibility-selector";
-import { entitlementsByUserType } from "@/lib/ai/entitlements";
+import type { ChatMessage } from "@/lib/types";
 import type { ChatModel } from "@/lib/ai/models";
 import type { RequestHints } from "@/lib/ai/prompts";
-import {
-  createStreamId,
-  getChatById,
-  getMessageCountByUserId,
-  getMessagesByChatId,
-  saveChat,
-  saveMessages,
-} from "@/lib/db/queries";
-import type { DBMessage } from "@/lib/db/schema";
-import { ChatSDKError } from "@/lib/errors";
-import type { ChatMessage } from "@/lib/types";
-import { convertToUIMessages, generateUUID } from "@/lib/utils";
-import { createAgentStream } from "@/lib/ai/agent/common";
+import type { AppUsage } from "@/lib/usage";
+import { generateUUID } from "@/lib/utils";
+import { classifyMessages } from "@/lib/ai/agent/classify";
+import { createResumeOptStream } from "@/lib/ai/agent/resume-opt";
+import { createMockInterviewStream } from "@/lib/ai/agent/mock-interview";
+import { createDefaultStream } from "@/lib/ai/agent/common";
 
-let globalStreamContext: ResumableStreamContext | null = null;
+export type CreateChatStreamOptions = {
+  messages: ChatMessage[];
+  selectedChatModel: ChatModel["id"];
+  requestHints: RequestHints;
+  session: Session;
+  onFinish?: (params: { messages: ChatMessage[]; usage?: AppUsage }) => void;
+};
 
-export function getStreamContext() {
-  if (!globalStreamContext) {
-    try {
-      globalStreamContext = createResumableStreamContext({
-        waitUntil: after,
-      });
-    } catch (error: any) {
-      if (error.message.includes("REDIS_URL")) {
-        console.log(
-          " > Resumable streams are disabled due to missing REDIS_URL"
-        );
-      } else {
-        console.error(error);
-      }
-    }
-  }
-
-  return globalStreamContext;
-}
-
-export async function processChatRequest({
-  request,
-  requestBody,
+export function createChatStream({
+  messages,
+  selectedChatModel,
+  requestHints,
   session,
-}: {
-  request: Request;
-  requestBody: PostRequestBody;
-  session: Session | null;
-}) {
-  try {
-    // @ts-ignore
-    const {
-      id,
-      message,
-      selectedChatModel,
-      selectedVisibilityType,
-    }: {
-      id: string;
-      message: ChatMessage;
-      selectedChatModel: ChatModel["id"];
-      selectedVisibilityType: VisibilityType;
-    } = requestBody;
+  onFinish,
+}: CreateChatStreamOptions) {
+  let finalMergedUsage: AppUsage | undefined;
 
-    if (!session?.user) {
-      return new ChatSDKError("unauthorized:chat").toResponse();
-    }
+  const stream = createUIMessageStream({
+    execute: async ({ writer: dataStream }) => {
+      // 先进行消息分类
+      const classification = await classifyMessages(messages);
+      // console.log("classification => ", classification);
 
-    const userType: UserType = session.user.type;
+      let result: any;
 
-    const messageCount = await getMessageCountByUserId({
-      id: session.user.id,
-      differenceInHours: 24,
-    });
-
-    if (messageCount > entitlementsByUserType[userType].maxMessagesPerDay) {
-      return new ChatSDKError("rate_limit:chat").toResponse();
-    }
-
-    // Extract base64 from file parts and create newMessage
-    let base64Value: string | undefined;
-    const newParts = message.parts.map((part) => {
-      if (
-        part.type === "file" &&
-        "base64" in part &&
-        typeof part.base64 === "string"
-      ) {
-        base64Value = part.base64;
-        // @ts-ignore Create a new text part
-        return { type: "text", text: `<${part.name as string}>` };
+      // 根据分类结果选择不同的处理方式
+      if (classification.resume_opt) {
+        // 简历优化
+        result = createResumeOptStream({
+          messages,
+          dataStream,
+          onUsageUpdate: (usage) => {
+            finalMergedUsage = usage;
+          },
+        });
+      } else if (classification.mock_interview) {
+        // 模拟面试
+        result = createMockInterviewStream({
+          messages,
+          dataStream,
+          onUsageUpdate: (usage) => {
+            finalMergedUsage = usage;
+          },
+        });
+      } else {
+        // 其他情况，执行原有逻辑
+        result = createDefaultStream({
+          messages,
+          selectedChatModel,
+          requestHints,
+          session,
+          dataStream,
+          onUsageUpdate: (usage) => {
+            finalMergedUsage = usage;
+          },
+        });
       }
-      return part;
-    });
 
-    const newMessage: ChatMessage = {
-      ...message,
-      // @ts-ignore
-      parts: newParts,
-    };
+      result.consumeStream();
 
-    console.log("base64 value:", base64Value);
-    console.log("newMessage...", newMessage);
-
-    const chat = await getChatById({ id });
-    let messagesFromDb: DBMessage[] = [];
-
-    if (chat) {
-      if (chat.userId !== session.user.id) {
-        return new ChatSDKError("forbidden:chat").toResponse();
+      dataStream.merge(
+        result.toUIMessageStream({
+          sendReasoning: true,
+        })
+      );
+    },
+    generateId: generateUUID,
+    onFinish: async ({ messages: finishedMessages }) => {
+      if (onFinish) {
+        await onFinish({
+          messages: finishedMessages as ChatMessage[],
+          usage: finalMergedUsage,
+        });
       }
-      // Only fetch messages if chat already exists
-      messagesFromDb = await getMessagesByChatId({ id });
-    } else {
-      const title = await generateTitleFromUserMessage({
-        message: newMessage,
-      });
+    },
+    onError: () => {
+      return "Oops, an error occurred!";
+    },
+  });
 
-      await saveChat({
-        id,
-        userId: session.user.id,
-        title,
-        visibility: selectedVisibilityType,
-      });
-      // New chat - no need to fetch messages, it's empty
-    }
-
-    const uiMessages = [...convertToUIMessages(messagesFromDb), newMessage];
-
-    const { longitude, latitude, city, country } = geolocation(request);
-
-    const requestHints: RequestHints = {
-      longitude,
-      latitude,
-      city,
-      country,
-    };
-
-    await saveMessages({
-      messages: [
-        {
-          chatId: id,
-          id: newMessage.id,
-          role: "user",
-          parts: newMessage.parts,
-          attachments: [],
-          createdAt: new Date(),
-        },
-      ],
-    });
-
-    const streamId = generateUUID();
-    await createStreamId({ streamId, chatId: id });
-
-    const stream = createAgentStream({
-      uiMessages,
-      selectedChatModel,
-      requestHints,
-      session,
-      chatId: id,
-    });
-
-    // const streamContext = getStreamContext();
-
-    // if (streamContext) {
-    //   return new Response(
-    //     await streamContext.resumableStream(streamId, () =>
-    //       stream.pipeThrough(new JsonToSseTransformStream())
-    //     )
-    //   );
-    // }
-
-    return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
-  } catch (error) {
-    const vercelId = request.headers.get("x-vercel-id");
-
-    if (error instanceof ChatSDKError) {
-      return error.toResponse();
-    }
-
-    // Check for Vercel AI Gateway credit card error
-    if (
-      error instanceof Error &&
-      error.message?.includes(
-        "AI Gateway requires a valid credit card on file to service requests"
-      )
-    ) {
-      return new ChatSDKError("bad_request:activate_gateway").toResponse();
-    }
-
-    console.error("Unhandled error in chat API:", error, { vercelId });
-    return new ChatSDKError("offline:chat").toResponse();
-  }
+  return stream;
 }
