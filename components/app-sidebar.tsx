@@ -71,7 +71,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                 }}
               >
                 <span className="cursor-pointer rounded-md px-2 font-semibold text-lg hover:bg-muted">
-                  Chatbot
+                  ZhiJi 知己
                 </span>
               </Link>
               <div className="flex flex-row gap-1">
@@ -88,7 +88,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent align="end" className="hidden md:block">
-                      Delete All Chats
+                      删除所有会话
                     </TooltipContent>
                   </Tooltip>
                 )}
@@ -108,7 +108,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent align="end" className="hidden md:block">
-                    New Chat
+                    新建会话
                   </TooltipContent>
                 </Tooltip>
               </div>

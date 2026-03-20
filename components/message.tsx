@@ -122,7 +122,7 @@ const PurePreviewMessage = ({
                   <div key={key}>
                     <MessageContent
                       className={cn({
-                        "w-fit break-words rounded-2xl px-3 py-2 text-right text-white":
+                        "w-fit wrap-break-words rounded-2xl px-3 py-2 text-right text-white":
                           message.role === "user",
                         "bg-transparent px-0 py-0 text-left":
                           message.role === "assistant",
@@ -260,6 +260,15 @@ const PurePreviewMessage = ({
                     )}
                   </ToolContent>
                 </Tool>
+              );
+            }
+
+            if (type === "tool-getBehavioralQuestions") {
+              const { toolCallId } = part;
+              return (
+                <div key={toolCallId}>
+                  <Response>{part.output?.content ?? "请稍后..."}</Response>
+                </div>
               );
             }
 

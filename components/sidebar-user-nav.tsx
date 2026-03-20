@@ -77,7 +77,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                 setTheme(resolvedTheme === "dark" ? "light" : "dark")
               }
             >
-              {`Toggle ${resolvedTheme === "light" ? "dark" : "light"} mode`}
+              {`切换 ${resolvedTheme === "light" ? "深色" : "浅色"} 模式`}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild data-testid="user-nav-item-auth">
@@ -104,7 +104,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                 }}
                 type="button"
               >
-                {isGuest ? "Login to your account" : "Sign out"}
+                {isGuest ? "登录您的账号" : "退出登录"}
               </button>
             </DropdownMenuItem>
           </DropdownMenuContent>

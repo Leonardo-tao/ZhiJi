@@ -5,7 +5,7 @@ import {
   wrapLanguageModel,
 } from "ai";
 import { isTestEnvironment } from "../constants";
-import { deepseek } from '@ai-sdk/deepseek';
+import { deepseek } from "@ai-sdk/deepseek";
 
 export const myProvider = isTestEnvironment
   ? (() => {

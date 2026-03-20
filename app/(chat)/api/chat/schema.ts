@@ -2,14 +2,15 @@ import { z } from "zod";
 
 const textPartSchema = z.object({
   type: z.enum(["text"]),
-  text: z.string().min(1).max(2000),
+  text: z.string().min(1).max(10_000),
 });
 
 const filePartSchema = z.object({
   type: z.enum(["file"]),
-  mediaType: z.enum(["image/jpeg", "image/png"]),
+  mediaType: z.enum(["image/jpeg", "image/png", "application/pdf"]),
   name: z.string().min(1).max(100),
-  url: z.string().url(),
+  url: z.string().optional(),
+  base64: z.string().optional(),
 });
 
 const partSchema = z.union([textPartSchema, filePartSchema]);
