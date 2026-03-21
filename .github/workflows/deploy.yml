@@ -31,13 +31,19 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build Next.js (standalone)
-        run: pnpm run build
+        run: |
+          pnpm run build
+          rm -rf .pnpm-store
 
       - name: Prepare deployment package
         run: |
           mkdir -p deploy
+          # 复制 standalone
           cp -r .next/standalone/* deploy/
-          # 如果存在 public 目录，复制进去
+          # static 文件夹单独复制
+          mkdir -p deploy/.next
+          cp -r .next/static deploy/.next/
+          # public
           [ -d public ] && cp -r public deploy/public
 
       - name: Compress package
@@ -71,7 +77,7 @@ jobs:
             cd /var/www/zhiji
 
             # 启动 PM2（使用 ecosystem.config.js）
-            # pm2 start /home/deploy/ecosystem.config.js
+            pm2 start /home/deploy/ecosystem.config.js
 
             # 保存 PM2 进程列表
             pm2 save
