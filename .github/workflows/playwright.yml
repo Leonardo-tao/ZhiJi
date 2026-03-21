@@ -72,6 +72,9 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Run a single test
+        run: pnpm test -- --grep "your-test-title"
+
       - name: Run Playwright tests
         run: pnpm test
 
