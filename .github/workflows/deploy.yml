@@ -1,0 +1,73 @@
+name: Build and Deploy Standalone (pnpm)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Next.js (standalone)
+        run: pnpm run build
+
+      - name: Prepare deployment package
+        run: |
+          mkdir -p deploy
+          cp -r .next/standalone/* deploy/
+          # 如果存在 public 目录，复制进去
+          [ -d public ] && cp -r public deploy/public
+
+      - name: Compress package
+        run: tar -czf deploy.tar.gz -C deploy .
+
+      - name: Upload to server via SCP
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          source: "deploy.tar.gz"
+          target: "/tmp/"
+
+      - name: Deploy and restart PM2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            # 停止旧进程（如果存在）
+            pm2 stop zhiji || true
+
+            # 清理旧目录并解压新包
+            rm -rf /var/www/zhiji
+            mkdir -p /var/www/zhiji
+            tar -xzf /tmp/deploy.tar.gz -C /var/www/zhiji
+
+            # 进入项目目录
+            cd /var/www/zhiji
+
+            # 启动 PM2（使用 ecosystem.config.js）
+            # pm2 start /home/deploy/ecosystem.config.js
+
+            # 保存 PM2 进程列表
+            pm2 save
+
+            # 清理临时文件
+            rm /tmp/deploy.tar.gz
