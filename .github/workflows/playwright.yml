@@ -19,11 +19,25 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser -d testdb"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
       AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      POSTGRES_URL: postgresql://testuser:testpass@localhost:5432/testdb
       BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
-      REDIS_URL: ${{ secrets.REDIS_URL }}
+      REDIS_URL: redis://localhost:6379
 
     steps:
       - uses: actions/checkout@v4
@@ -60,7 +74,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
+      - name: Run database migrations (if any)
+        run: pnpm prisma db push  # 根据你的 ORM 修改
+        env:
+          POSTGRES_URL: postgresql://testuser:testpass@localhost:5432/testdb
       - name: Cache Playwright browsers
         uses: actions/cache@v3
         id: playwright-cache
