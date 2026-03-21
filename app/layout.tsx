@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import Script from "next/script";
 
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
@@ -70,6 +71,25 @@ export default function RootLayout({
             __html: THEME_COLOR_SCRIPT,
           }}
         />
+        {/* 百度统计监控代码，仅在生产环境生效 */}
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            id="baidu-analytics"
+            strategy="afterInteractive"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required"
+            dangerouslySetInnerHTML={{
+              __html: `
+                var _hmt = _hmt || [];
+                (function() {
+                  var hm = document.createElement("script");
+                  hm.src = "https://hm.baidu.com/hm.js?07ad5bb452b2eff19ab73725c4a8411c";
+                  var s = document.getElementsByTagName("script")[0]; 
+                  s.parentNode.insertBefore(hm, s);
+                })();
+              `,
+            }}
+          />
+        )}
       </head>
       <body className="antialiased">
         <ThemeProvider
