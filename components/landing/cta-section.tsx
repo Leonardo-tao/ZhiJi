@@ -8,8 +8,8 @@ export function CTASection() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-2xl bg-card border border-border overflow-hidden homepage-card-glow">
           {/* Background Glow */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--homepage-glow)] rounded-full blur-[100px]" />
-          <div className="absolute bottom-0 left-0 w-60 h-60 bg-[var(--homepage-glow)] rounded-full blur-[80px] opacity-50" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-(--homepage-glow) rounded-full blur-[100px]" />
+          <div className="absolute bottom-0 left-0 w-60 h-60 bg-(--homepage-glow) rounded-full blur-[80px] opacity-50" />
 
           <div className="relative z-10 p-8 sm:p-12 lg:p-16 text-center">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 text-balance">

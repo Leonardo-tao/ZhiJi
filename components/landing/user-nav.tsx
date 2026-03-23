@@ -62,7 +62,7 @@ export function UserNav({ user }: { user: any }) {
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-56"
+        className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
         align="end"
         data-testid="user-nav-menu"
       >

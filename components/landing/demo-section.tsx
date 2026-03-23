@@ -81,7 +81,7 @@ export function DemoSection() {
               </div>
 
               {/* Demo Info Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-card via-card/80 to-transparent p-6">
+              <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-card via-card/80 to-transparent p-6">
                 <Badge variant="secondary" className="mb-2">
                   {demos[activeDemo].tag}
                 </Badge>
