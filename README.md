@@ -1,71 +1,79 @@
-<a href="https://chat.vercel.ai/">
-  <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
-  <h1 align="center">Chat SDK</h1>
-</a>
+# ZhiJi (知己) 🤖✨
 
-<p align="center">
-    Chat SDK is a free, open-source template built with Next.js and the AI SDK that helps you quickly build powerful chatbot applications.
-</p>
+[![GitHub Repo](https://img.shields.io/badge/GitHub-ZhiJi-blue.svg?logo=github)](https://github.com/Leonardo-tao/ZhiJi)
+[![Website](https://img.shields.io/badge/Website-zhiji.codercat.top-green.svg)](https://zhiji.codercat.top)
 
-<p align="center">
-  <a href="https://chat-sdk.dev"><strong>Read Docs</strong></a> ·
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#model-providers"><strong>Model Providers</strong></a> ·
-  <a href="#deploy-your-own"><strong>Deploy Your Own</strong></a> ·
-  <a href="#running-locally"><strong>Running locally</strong></a>
-</p>
-<br/>
+*其他语言版本: 简体中文, [English](README.md).*
 
-## Features
+ZhiJi（知己）是一个功能强大的开源 AI 聊天机器人项目，基于 Next.js App Router 和 Vercel AI SDK 构建。它不仅提供多模型支持的统一聊天界面，还具备强大的 Artifacts（工件）生成能力，是您在模拟面试和简历优化等方面的智能助手！
 
-- [Next.js](https://nextjs.org) App Router
-  - Advanced routing for seamless navigation and performance
-  - React Server Components (RSCs) and Server Actions for server-side rendering and increased performance
-- [AI SDK](https://ai-sdk.dev/docs/introduction)
-  - Unified API for generating text, structured objects, and tool calls with LLMs
-  - Hooks for building dynamic chat and generative user interfaces
-  - Supports xAI (default), OpenAI, Fireworks, and other model providers
-- [shadcn/ui](https://ui.shadcn.com)
-  - Styling with [Tailwind CSS](https://tailwindcss.com)
-  - Component primitives from [Radix UI](https://radix-ui.com) for accessibility and flexibility
-- Data Persistence
-  - [Neon Serverless Postgres](https://vercel.com/marketplace/neon) for saving chat history and user data
-  - [Vercel Blob](https://vercel.com/storage/blob) for efficient file storage
-- [Auth.js](https://authjs.dev)
-  - Simple and secure authentication
+## 🔗 相关链接
+- **在线体验**: [zhiji.codercat.top](https://zhiji.codercat.top)
+- **GitHub 仓库**: [Leonardo-tao/ZhiJi](https://github.com/Leonardo-tao/ZhiJi)
 
-## Model Providers
+## 🌟 核心功能
 
-This template uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) to access multiple AI models through a unified interface. The default configuration includes [xAI](https://x.ai) models (`grok-2-vision-1212`, `grok-3-mini`) routed through the gateway.
+- 💬 **多模态 AI 交互**：支持富文本、图像理解和文件上传分析。
+- 🎨 **Artifacts（工件）系统**：在聊天界面中直接动态生成、预览和编辑代码、文本文档、电子表格和图像。
+- 🤖 **专属智能体（Agents）**：内置专门用于“模拟面试（Mock Interviews）”和“简历优化（Resume Optimization）”的智能体。
+- 🌐 **多模型无缝接入**：通过 Vercel AI SDK 轻松集成 DeepSeek、xAI、OpenAI 等多种大语言模型。
+- 🔒 **安全认证系统**：由 Auth.js (NextAuth v5) 驱动的安全登录、注册系统，并支持便捷的游客模式。
+- 💾 **数据持久化**：使用 Neon Postgres 和 Drizzle ORM 安全存储聊天记录、用户数据和文档内容。
+- 💅 **优雅的 UI/UX**：采用 Tailwind CSS、shadcn/ui 和 Framer Motion 打造丝滑流畅的响应式界面，完美适配移动端。
+- ⚡ **实时流式响应**：基于 Server-Sent Events (SSE) 和 React Server Components (RSCs) 提供低延迟的打字机输出体验。
 
-### AI Gateway Authentication
+## 📸 界面预览
 
-**For Vercel deployments**: Authentication is handled automatically via OIDC tokens.
+<img src="public/preview/preview-chat.png" alt="ZhiJi 预览" />
 
-**For non-Vercel deployments**: You need to provide an AI Gateway API key by setting the `AI_GATEWAY_API_KEY` environment variable in your `.env.local` file.
+## 🛠️ 技术栈
 
-With the [AI SDK](https://ai-sdk.dev/docs/introduction), you can also switch to direct LLM providers like [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://ai-sdk.dev/providers/ai-sdk-providers) with just a few lines of code.
+- **核心框架**: [Next.js](https://nextjs.org/) (App Router, Server Actions)
+- **AI 框架**: [Vercel AI SDK](https://sdk.vercel.ai/docs)
+- **数据库**: [PostgreSQL](https://postgresql.org/) (Neon) & [Drizzle ORM](https://orm.drizzle.team/)
+- **身份验证**: [Auth.js](https://authjs.dev/)
+- **前端样式**: [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
+- **文件存储**: [Vercel Blob](https://vercel.com/docs/storage/vercel-blob)
+- **编辑器组件**: CodeMirror & ProseMirror
 
-## Deploy Your Own
+## 🚀 快速开始
 
-You can deploy your own version of the Next.js AI Chatbot to Vercel with one click:
+### 环境要求
+- Node.js (v18+)
+- pnpm
+- PostgreSQL 数据库 (如 Neon)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/templates/next.js/nextjs-ai-chatbot)
+### 本地运行
 
-## Running locally
+1. **克隆项目到本地**
+   ```bash
+   git clone https://github.com/Leonardo-tao/ZhiJi.git
+   cd ZhiJi
+   ```
 
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js AI Chatbot. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a `.env` file is all that is necessary.
+2. **安装依赖**
+   ```bash
+   pnpm install
+   ```
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various AI and authentication provider accounts.
+3. **配置环境变量**
+   复制示例环境变量文件并填入您的配置：
+   ```bash
+   cp .env.example .env.local
+   ```
+   *注意：您需要配置数据库 URL、Auth Secret 以及 AI 供应商的 API Key。*
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+4. **初始化数据库**
+   ```bash
+   pnpm db:migrate
+   ```
 
-```bash
-pnpm install
-pnpm db:migrate # Setup database or apply latest database changes
-pnpm dev
-```
+5. **启动开发服务器**
+   ```bash
+   pnpm dev
+   ```
+   现在，您的应用应该已经运行在 [http://localhost:3000](http://localhost:3000)。
 
-Your app template should now be running on [localhost:3000](http://localhost:3000).
+## 📄 开源协议
+
+本项目开源，遵循 MIT 协议。

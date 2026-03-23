@@ -14,7 +14,7 @@ export function HeroSection() {
       <div className="absolute inset-0 homepage-radial-gradient" />
 
       {/* Glow Effect */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-(--homepage-glow) rounded-full blur-[120px]" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-150 h-150 bg-(--homepage-glow) rounded-full blur-[120px]" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Badge */}

@@ -32,5 +32,53 @@
     "source.fixAll.biome": "explicit",
     "source.organizeImports.biome": "explicit"
   },
-  "cSpell.words": ["DEEPSEEK"]
+  "cSpell.words": [
+    "cmdk",
+    "DEEPSEEK",
+    "inputrules",
+    "katex",
+    "orderedmap",
+    "papaparse",
+    "prosemirror",
+    "shiki",
+    "vaul"
+  ],
+  "[html]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[mdx]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[svelte]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "next.config.*": "*.env, .env.*, proxy.ts, tsconfig.json, jsconfig.json, .eslintrc*, .prettierrc*, .babelrc*, biome.jsonc, drizzle.config.ts, playwright.config.ts, postcss.config.mjs",
+    "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.map, ${capture}.test.ts, ${capture}.spec.ts",
+    "*.tsx": "${capture}.module.css, ${capture}.module.scss, ${capture}.module.sass, ${capture}.test.tsx, ${capture}.spec.tsx",
+    "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+    "*.jsx": "${capture}.module.css, ${capture}.module.scss, ${capture}.test.jsx",
+    "page.tsx": "page.module.css, page.module.scss, page.test.tsx",
+    "layout.tsx": "layout.module.css, layout.module.scss",
+    "loading.tsx": "loading.module.css",
+    "error.tsx": "error.module.css",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, .npmrc",
+    "README.md": "readme.md, README*, CHANGELOG*, LICENSE*"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+  }
 }

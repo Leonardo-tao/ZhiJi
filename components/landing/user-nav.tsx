@@ -52,7 +52,7 @@ export function UserNav({ user }: { user: any }) {
               width={24}
             />
             <span
-              className="truncate max-w-[100px] sm:max-w-[150px]"
+              className="truncate max-w-25 sm:max-w-37.5"
               data-testid="user-email"
             >
               {isGuest ? "Guest" : user?.email}
