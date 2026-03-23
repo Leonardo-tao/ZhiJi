@@ -19,6 +19,7 @@
   --homepage-accent: hsl(172 66% 50%);
   --homepage-accent-foreground: hsl(220 20% 6%);
   --homepage-border: hsl(220 15% 18%);
+  --border: hsl(220 15% 18%);
   --homepage-ring: hsl(172 66% 50%);
 
   /* Gradient colors */
@@ -28,6 +29,21 @@
   /* Glow effect */
   --homepage-glow: hsl(172 66% 50% / 0.15);
   --homepage-glow-strong: hsl(172 66% 50% / 0.3);
+
+  /* Scrollbar tokens */
+  --homepage-scrollbar-thumb: #2e2e32;
+  --homepage-scrollbar-thumb-hover: #59595c;
+  --homepage-scrollbar-track: transparent;
+}
+
+/* Ensure root and body match homepage background when active to fix white scrollbar track */
+:root:has(.homepage-wrapper) {
+  background-color: var(--homepage-background) !important;
+  color-scheme: dark !important;
+}
+
+:root:has(.homepage-wrapper) body {
+  background-color: var(--homepage-background) !important;
 }
 
 /* Homepage wrapper - applies dark tech theme */
@@ -209,6 +225,43 @@
     50% {
       box-shadow: 0 0 40px var(--homepage-glow-strong);
     }
+  }
+
+  /* Custom scrollbar styles - more specific to override globals */
+  html:has(.homepage-wrapper)::-webkit-scrollbar,
+  html:has(.homepage-wrapper) ::-webkit-scrollbar,
+  .homepage-wrapper::-webkit-scrollbar {
+    width: 10px !important;
+    height: 10px !important;
+  }
+  
+  html:has(.homepage-wrapper)::-webkit-scrollbar-track,
+  html:has(.homepage-wrapper) ::-webkit-scrollbar-track,
+  .homepage-wrapper::-webkit-scrollbar-track {
+    background: var(--homepage-scrollbar-track) !important;
+  }
+  
+  html:has(.homepage-wrapper)::-webkit-scrollbar-thumb,
+  html:has(.homepage-wrapper) ::-webkit-scrollbar-thumb,
+  .homepage-wrapper::-webkit-scrollbar-thumb {
+    background: var(--homepage-scrollbar-thumb) !important;
+    border-radius: 10px !important;
+    border: 2px solid transparent !important;
+    background-clip: content-box !important;
+  }
+  
+  html:has(.homepage-wrapper)::-webkit-scrollbar-thumb:hover,
+  html:has(.homepage-wrapper) ::-webkit-scrollbar-thumb:hover,
+  .homepage-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--homepage-scrollbar-thumb-hover) !important;
+    background-clip: content-box !important;
+  }
+
+  /* Firefox scrollbar support - use * selector to defeat global * */
+  :root:has(.homepage-wrapper) *,
+  :root:has(.homepage-wrapper) {
+    scrollbar-color: var(--homepage-scrollbar-thumb) var(--homepage-scrollbar-track) !important;
+    scrollbar-width: thin !important;
   }
 }
 

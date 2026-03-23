@@ -5,7 +5,7 @@ import { DemoSection } from "@/components/landing/demo-section";
 import { TechStackSection } from "@/components/landing/tech-stack-section";
 import { CTASection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
-import "./homepage.css";
+import "@/styles/home.css";
 import { auth } from "@/app/(auth)/auth";
 
 export default async function HomePage() {
