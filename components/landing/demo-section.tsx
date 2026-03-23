@@ -4,31 +4,27 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 const demos = [
   {
     id: 1,
     title: "简历优化演示",
     description: "上传简历，AI 智能分析并给出优化建议",
-    // 替换为你的 GIF 路径
-    gifUrl: "/resume-optimization.gif",
+    videoUrl: "/resume-optimization.mp4",
     tag: "简历优化",
   },
   {
     id: 2,
     title: "模拟面试演示",
     description: "真实面试场景，AI 面试官实时提问",
-    // 替换为你的 GIF 路径
-    gifUrl: "/mock-interview.gif",
+    videoUrl: "/mock-interview.mp4",
     tag: "模拟面试",
   },
   {
     id: 3,
     title: "面试题解答演示",
     description: "海量题库，深入浅出的解析",
-    // 替换为你的 GIF 路径
-    gifUrl: "/question-answer.gif",
+    videoUrl: "/question-answer.mp4",
     tag: "题目解答",
   },
 ];
@@ -70,21 +66,17 @@ export function DemoSection() {
         </div>
 
         {/* Demo Display */}
-        <Card className="homepage-demo-container bg-card border-border overflow-hidden">
+        <Card className="homepage-demo-container border-none bg-card overflow-hidden">
           <CardContent className="p-0">
             <div className="relative">
-              {/* GIF Container */}
+              {/* Video Container */}
               <div className="aspect-video bg-muted relative overflow-hidden">
-                <Image
-                  src={demos[activeDemo].gifUrl}
-                  alt={demos[activeDemo].title}
-                  className="w-full h-full object-cover"
-                  width={1920}
-                  height={870}
-                  unoptimized
-                  loading="lazy"
-                  placeholder="blur"
-                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mO88+P3fwAJzQP5iH/WNAAAAABJRU5ErkJggg=="
+                <video
+                  src={demos[activeDemo].videoUrl}
+                  className="w-full h-full object-cover absolute top-0 left-0"
+                  autoPlay
+                  loop
+                  muted
                 />
               </div>
 

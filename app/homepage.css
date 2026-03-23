@@ -147,7 +147,6 @@
   /* Demo preview container */
   .homepage-demo-container {
     background: var(--homepage-card);
-    border: 1px solid var(--homepage-border);
     border-radius: var(--radius);
     overflow: hidden;
   }
